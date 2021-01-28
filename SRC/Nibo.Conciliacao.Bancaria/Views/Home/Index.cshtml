@@ -1,0 +1,102 @@
+﻿@using Nibo.Conciliacao.Bancaria.Models
+@model Nibo.Conciliacao.Bancaria.Models.FileModel
+@{
+    ViewBag.Title = "Conciliação bancária";
+    var stmttrns = (List<Stmttrn>)ViewBag.Stmttrn;
+
+}
+
+@using (Html.BeginForm("Index", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.files, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.files, "", new { @type = "file", @multiple = "multiple" })
+                @Html.ValidationMessageFor(model => model.files, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Upload" class="btn btn-primary" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10 text-success">
+                @ViewBag.UploadStatus
+            </div>
+        </div>
+
+        @if (ViewBag.isExistSomething)
+        {
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10 text-success">
+                    @Html.Raw(ViewBag.FilesExist)
+                </div>
+            </div>
+        }
+
+    </div>
+}
+
+<div class="form-horizontal">
+    @if (stmttrns != null)
+    {
+
+        <div class="linha"></div>
+
+        <h2> STMTTRN </h2>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>TRNTYPE</th>
+                    <th>DTPOSTED</th>
+                    <th>TRNAMT</th>
+                    <th>MEMO</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var stmttrn in stmttrns)
+                {
+                    <tr>
+                        <td>@stmttrn.Trntype</td>
+                        <td>@stmttrn.Dtposted</td>
+                        <td>@stmttrn.Trnamt.ToString("C2", System.Globalization.CultureInfo.CurrentCulture)</td>
+                        <td>@stmttrn.Memo</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="linha"></div>
+
+        <div class="form-group">
+            <div class="col-md-12">
+                <label>Total Débito: R$</label>@ViewBag.CountDebit
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-12">
+                <label>Total Crédito: R$</label>@ViewBag.CountCredit
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-12">
+                <label>Saldo Total: R$</label>@ViewBag.AccountBalance
+            </div>
+        </div>
+
+    }
+
+</div>
+
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
